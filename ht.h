@@ -339,8 +339,8 @@ void HashTable<K, V, Prober, Hash, KEqual>::insert(const ItemType &p)
 {
     HASH_INDEX_T h = this->probe(p.first);
 
-    if(h >= size()) {
-        this->resize();
+    if(h > size()) {
+        //this->resize();
     }
 
     // Insert the element into the hash table at the final hash value
