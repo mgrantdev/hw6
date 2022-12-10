@@ -293,7 +293,7 @@ private:
 template <typename K, typename V, typename Prober, typename Hash, typename KEqual>
 const HASH_INDEX_T HashTable<K, V, Prober, Hash, KEqual>::CAPACITIES[] =
     {
-        1, 2, 3, 5, 7, 11, 23, 47, 97, 197, 397, 797, 1597, 3203, 6421, 12853, 25717, 51437, 102877,
+        2, 3, 5, 7, 11, 23, 47, 97, 197, 397, 797, 1597, 3203, 6421, 12853, 25717, 51437, 102877,
         205759, 411527, 823117, 1646237, 3292489, 6584983, 13169977, 26339969, 52679969,
         105359969, 210719881, 421439783, 842879579, 1685759167};
 
@@ -338,10 +338,6 @@ template <typename K, typename V, typename Prober, typename Hash, typename KEqua
 void HashTable<K, V, Prober, Hash, KEqual>::insert(const ItemType &p)
 {
     HASH_INDEX_T h = this->probe(p.first);
-
-    if(h > size()) {
-        //this->resize();
-    }
 
     // Insert the element into the hash table at the final hash value
     table_[h] = new HashItem(p);
@@ -432,19 +428,53 @@ typename HashTable<K, V, Prober, Hash, KEqual>::HashItem *HashTable<K, V, Prober
 template <typename K, typename V, typename Prober, typename Hash, typename KEqual>
 void HashTable<K, V, Prober, Hash, KEqual>::resize()
 {
-    /*mIndex_++;
-    std::vector<HashItem *> newData;
-    newData.reserve(size());
-    for(int n = 0; n < size(); n++) {
-        newData.insert(table_[n]);
-    }
-    table_.clear();
+     // Create a new hash table and a new probing array with the new size
+    /*std::vector< *newHashTable = new T[newSize];
+    bool *newProbeArray = new bool[newSize];
 
-    // Resize the table and re-insert the saved data.
-    table_.resize(CAPACITIES[mIndex_]);
-    for(int n = 0; n < size(); n++) {
-      this->insert(newData[n]->item);
-    }*/
+    // Initialize the new probing array to all false
+    for (int i = 0; i < newSize; i++)
+    {
+        newProbeArray[i] = false;
+    }
+
+    // Rehash all the elements in the old hash table and insert them into the new hash table
+    for (int i = 0; i < TABLE_SIZE; i++)
+    {
+        if (probeArray[i])
+        {
+            // Compute the initial hash value for the key
+            int hashValue = hash(hashTable[i]);
+
+            // Keep track of the number of probes
+            int numProbes = 0;
+
+            // Perform template probing until we find an empty slot or we reach the end of the new hash table
+            while (newProbeArray[hashValue] && numProbes < newSize)
+            {
+                // Increment the number of probes
+                numProbes++;
+
+                // Compute the next hash value using a template probe
+                hashValue = (hashValue + numProbes * numProbes) % newSize;
+            }
+
+            // Insert the element into the new hash table at the final hash value
+            newHashTable[hashValue] = hashTable[i];
+            newProbeArray[hashValue] = true;
+        }
+    }
+
+    // Delete the old hash table and the old probing array
+    delete[] hashTable;
+    delete[] probeArray;
+
+    // Set the new hash table and the new probing array as the current hash table and the current probing array
+    hashTable = newHashTable;
+    probeArray = newProbeArray;
+
+    // Set the new size of the hash table
+    TABLE_SIZE = newSize;*/
 }
 
 template <typename K, typename V, typename Prober, typename Hash, typename KEqual>
