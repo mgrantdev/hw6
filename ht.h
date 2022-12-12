@@ -348,15 +348,15 @@ size_t HashTable<K, V, Prober, Hash, KEqual>::size() const
 template <typename K, typename V, typename Prober, typename Hash, typename KEqual>
 void HashTable<K, V, Prober, Hash, KEqual>::insert(const ItemType &p)
 {
-    double rAlpha = size()/CAPACITIES[mIndex_];
-    if(rAlpha >= resizeAlpha_) {
-        this->resize();
-    }
 
     HASH_INDEX_T h = this->probe(p.first);
     // Insert the element into the hash table at the final hash value
     table_[h] = new HashItem(p);
     //std::cout << "inserted " << p.second << " (" << p.first << ") at index " << h << std::endl;
+     double rAlpha = size()/CAPACITIES[mIndex_];
+    if(rAlpha >= resizeAlpha_) {
+        this->resize();
+    }
 }
 
 // To do
