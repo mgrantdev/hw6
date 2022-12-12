@@ -339,7 +339,7 @@ void HashTable<K, V, Prober, Hash, KEqual>::insert(const ItemType &p)
     HASH_INDEX_T h = this->probe(p.first);
 
     //std::cout << "hash: " << h << std::endl;
-    if(h <= size()) {
+    if(h >= size()) {
         this->resize(h);
     }
 
@@ -432,7 +432,7 @@ typename HashTable<K, V, Prober, Hash, KEqual>::HashItem *HashTable<K, V, Prober
 template <typename K, typename V, typename Prober, typename Hash, typename KEqual>
 void HashTable<K, V, Prober, Hash, KEqual>::resize(HASH_INDEX_T h)
 {
-    while(CAPACITIES[mIndex_] <= h) {
+    while(CAPACITIES[mIndex_] >= h) {
         mIndex_++;
         if(mIndex_ > 50) break;
     } 
