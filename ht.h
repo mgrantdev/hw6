@@ -356,7 +356,7 @@ void HashTable<K, V, Prober, Hash, KEqual>::insert(const ItemType &p)
     HASH_INDEX_T h = this->probe(p.first);
     // Insert the element into the hash table at the final hash value
     table_[h] = new HashItem(p);
-    //std::cout << "inserted " << p.second << " (" << p.first << ") at index " << h << std::endl;
+    std::cout << "inserted " << p.second << " (" << p.first << ") at index " << h << std::endl;
 }
 
 // To do
@@ -468,7 +468,7 @@ HASH_INDEX_T HashTable<K, V, Prober, Hash, KEqual>::probe(const KeyType &key) co
         }
         // fill in the condition for this else if statement which should
         // return 'loc' if the given key exists at this location
-        else if (table_[loc]->deleted)
+        else if (!table_[loc]->deleted)
         {
             ////std::cout << loc << " is deleted" << std::endl;
             return loc;
