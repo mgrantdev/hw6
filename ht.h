@@ -363,6 +363,10 @@ void HashTable<K, V, Prober, Hash, KEqual>::insert(const ItemType &p)
 template <typename K, typename V, typename Prober, typename Hash, typename KEqual>
 void HashTable<K, V, Prober, Hash, KEqual>::remove(const KeyType &key)
 {
+    HASH_INDEX_T h = this->probe(key);
+    if(table_[h] != nullptr) {
+        table_[h]->deleted = true;
+    }
 }
 
 // Complete
