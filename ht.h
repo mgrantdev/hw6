@@ -35,7 +35,7 @@ struct LinearProber : public Prober<KeyType>
 
     HASH_INDEX_T next()
     {
-        //std::cout << "next linear probe" << std::endl;
+        ////std::cout << "next linear probe" << std::endl;
         // Condition below that indicates failure
         // to find the key or an empty slot
         if (this->numProbes_ >= this->m_)
@@ -113,10 +113,10 @@ public:
             return this->npos;
         }
         HASH_INDEX_T h1 = (this->start_ + this->numProbes_) % this->m_;
-        ////std::cout << "dh1: " << h1 << std::endl;
+        //////std::cout << "dh1: " << h1 << std::endl;
 
         HASH_INDEX_T loc = (h1 + (this->numProbes_ * this->dhstep_)) % this->m_;
-        ////std::cout << "next double hash:" << loc << std::endl;
+        //////std::cout << "next double hash:" << loc << std::endl;
         this->numProbes_++;
         return loc;
     }
@@ -356,7 +356,7 @@ void HashTable<K, V, Prober, Hash, KEqual>::insert(const ItemType &p)
     HASH_INDEX_T h = this->probe(p.first);
     // Insert the element into the hash table at the final hash value
     table_[h] = new HashItem(p);
-    std::cout << "inserted " << p.second << " (" << p.first << ") at index " << h << std::endl;
+    //std::cout << "inserted " << p.second << " (" << p.first << ") at index " << h << std::endl;
 }
 
 // To do
@@ -446,7 +446,7 @@ void HashTable<K, V, Prober, Hash, KEqual>::resize()
     mIndex_++;
     table_.clear();
     table_.resize(CAPACITIES[mIndex_], nullptr);
-    //std::cout << "resized to " << CAPACITIES[mIndex_] << std::endl;
+    ////std::cout << "resized to " << CAPACITIES[mIndex_] << std::endl;
 }
 
 template <typename K, typename V, typename Prober, typename Hash, typename KEqual>
@@ -455,22 +455,22 @@ HASH_INDEX_T HashTable<K, V, Prober, Hash, KEqual>::probe(const KeyType &key) co
     HASH_INDEX_T h = hash_(key) % CAPACITIES[mIndex_];
     prober_.init(h, CAPACITIES[mIndex_], key);
 
-    ////std::cout << "hash: " << hash_(key) << std::endl;
+    //////std::cout << "hash: " << hash_(key) << std::endl;
     HASH_INDEX_T loc = prober_.next();
     totalProbes_++;
     while (Prober::npos != loc)
     {
-        ////std::cout << "checking location: " << loc << std::endl;
+        //////std::cout << "checking location: " << loc << std::endl;
         if (nullptr == table_[loc])
         {
-            ////std::cout << loc << " is empty" << std::endl;
+            //////std::cout << loc << " is empty" << std::endl;
             return loc;
         }
         // fill in the condition for this else if statement which should
         // return 'loc' if the given key exists at this location
         else if (!table_[loc]->deleted)
         {
-            ////std::cout << loc << " is deleted" << std::endl;
+            //////std::cout << loc << " is deleted" << std::endl;
             return loc;
         }
         loc = prober_.next();
