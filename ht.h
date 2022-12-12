@@ -434,7 +434,7 @@ void HashTable<K, V, Prober, Hash, KEqual>::resize(HASH_INDEX_T h)
 {
     while(CAPACITIES[mIndex_] <= h) {
         mIndex_++;
-        if(mIndex > 30)
+        if(mIndex_ > 50) break;
     } 
     table_.resize(CAPACITIES[mIndex_]);
     probes_.resize(CAPACITIES[mIndex_]);
