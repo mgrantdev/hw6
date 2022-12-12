@@ -99,22 +99,22 @@ bool boggleHelper(const std::set<std::string> &dict, const std::set<std::string>
 
 	// word found
 	std::cout << currentWord << std::endl;
-	if (currentWord.length() >= 1 && dict.find(currentWord) != dict.end())
+	if (currentWord.length() > 1 && dict.find(currentWord) != dict.end())
 	{
 		result.insert(currentWord);
 		return true;
 	}
 
 	// stop if the prefix isn't valid
-	if (prefix.find(currentWord) == prefix.end())
+	if (currentWord.length() > 1 && prefix.find(currentWord) == prefix.end())
 	{
 		return false;
 	}
 
 	// check all neighbor cubes
-	for (int vert = -1; vert <= 1; vert++)
+	for (int vert = 0; vert <= 1; vert++)
 	{
-		for (int horiz = -1; horiz <= 1; horiz++)
+		for (int horiz = 0; horiz <= 1; horiz++)
 		{
 			// watch for grid borders and used cubes
 			if (r + vert >= 0 && r + vert < board.size() &&
@@ -122,11 +122,11 @@ bool boggleHelper(const std::set<std::string> &dict, const std::set<std::string>
 				board[r + vert][c + horiz] != '-' &&
 				!(horiz == 0 && vert == 0))
 			{
-				board[r][c] = board[r + vert][c + horiz]; // used cube
-				if(boggleHelper(dict, prefix, board, currentWord, result, r, c, dr, dc)) return true;
+				board[r][c] = '-'; // used cube
+				if(boggleHelper(dict, prefix, board, currentWord, result, r + vert, c, dr, dc) || boggleHelper(dict, prefix, board, currentWord, result, r, c + horiz, dr, dc) || boggleHelper(dict, prefix, board, currentWord, result, r + vert, c + horiz, dr, dc)) return true;
 				board[r][c] = origL; // reset cube for different letter arrangement
-				return false;
 			}
 		}
 	}
+	return false;
 }
