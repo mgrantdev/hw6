@@ -102,8 +102,17 @@ bool boggleHelper(const std::set<std::string> &dict, const std::set<std::string>
 	//std::cout << currentWord << std::endl;
 	if (currentWord.length() > 1 && dict.find(currentWord) != dict.end())
 	{
+		// check for prefixes in results and remove
+		std::set<std::string> resultCpy = result;
+		if(currentWord.length() > 2) {
+			for(std::set<std::string>::iterator it = result.begin(); it != result.end(); ++it) {
+				if (currentWord.find(*it) != std::string::npos) {
+					resultCpy.erase(*it);
+				}
+			}
+		}
+		result = resultCpy;
 		result.insert(currentWord);
-		return true;
 	}
 
 	// stop if the prefix isn't valid
