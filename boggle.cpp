@@ -45,9 +45,9 @@ void printBoard(const std::vector<std::vector<char>> &board)
 	{
 		for (unsigned int j = 0; j < n; j++)
 		{
-			std::cout << std::setw(2) << board[i][j];
+			//std::cout << std::setw(2) << board[i][j];
 		}
-		std::cout << std::endl;
+		//std::cout << std::endl;
 	}
 }
 
@@ -93,12 +93,13 @@ bool boggleHelper(const std::set<std::string> &dict, const std::set<std::string>
 				  std::string word, std::set<std::string> &result, unsigned int r, unsigned int c, int dr, int dc)
 {
 	// add your solution here!
-	char letter = board[r][c];	  // cube letter
-	char origL = letter;		  // original cube string
+	char letter = board[r][c];				 // cube letter
+	char origL = letter;					 // original cube string
 	std::string currentWord = word + letter; // build word
 
 	// word found
-	std::cout << currentWord << std::endl;
+	//std::cout << "current letter: " << letter << std::endl;
+	//std::cout << currentWord << std::endl;
 	if (currentWord.length() > 1 && dict.find(currentWord) != dict.end())
 	{
 		result.insert(currentWord);
@@ -111,21 +112,64 @@ bool boggleHelper(const std::set<std::string> &dict, const std::set<std::string>
 		return false;
 	}
 
-	// check all neighbor cubes
-	for (int vert = 0; vert <= 1; vert++)
+	if (currentWord.length() == board.size())
+		return false;
+
+	// check all neighbor cubes if no direction specified
+	if (dr == 0 && dc == 0)
 	{
-		for (int horiz = 0; horiz <= 1; horiz++)
+		for (int vert = 0; vert <= 1; vert++)
 		{
-			// watch for grid borders and used cubes
-			if (r + vert >= 0 && r + vert < board.size() &&
-				c + horiz >= 0 && c + horiz < board[0].size() &&
-				board[r + vert][c + horiz] != '-' &&
-				!(horiz == 0 && vert == 0))
+			for (int horiz = 0; horiz <= 1; horiz++)
 			{
-				board[r][c] = '-'; // used cube
-				if(boggleHelper(dict, prefix, board, currentWord, result, r + vert, c, dr, dc) || boggleHelper(dict, prefix, board, currentWord, result, r, c + horiz, dr, dc) || boggleHelper(dict, prefix, board, currentWord, result, r + vert, c + horiz, dr, dc)) return true;
-				board[r][c] = origL; // reset cube for different letter arrangement
+				//std::cout << "horizontal direction: " << horiz << std::endl;
+				//std::cout << "vertical direction: " << vert << std::endl;
+				// watch for grid borders and used cubes
+				if (r + vert >= 0 && r + vert < board.size() &&
+					c + horiz >= 0 && c + horiz < board[0].size() &&
+					board[r + vert][c + horiz] != '-' &&
+					!(horiz == 0 && vert == 0) &&
+					currentWord.length() < board.size()
+				)
+				{
+					board[r][c] = '-'; // used cube
+					//std::cout << "trying neighbors" << std::endl;
+					if (boggleHelper(dict, prefix, board, currentWord, result, r + vert, c, vert, horiz) || boggleHelper(dict, prefix, board, currentWord, result, r, c + horiz, vert, horiz) || boggleHelper(dict, prefix, board, currentWord, result, r + vert, c + horiz, vert, horiz))
+						return true;
+					board[r][c] = origL; // reset cube for different letter arrangement
+				}
 			}
+		}
+	}
+	else if (dr != 0 && dc == 0)
+	{
+		// horizontal case
+		if (r + dr >= 0 && r + dr < board.size())
+		{
+			if (boggleHelper(dict, prefix, board, currentWord, result, r + dr, c, dr, dc))
+				return true;
+			board[r][c] = origL; // reset cube for different letter arrangement
+		}
+	}
+	else if (dc != 0 && dr == 0)
+	{
+		// vertical case
+		if (c + dc >= 0 && c + dc < board.size())
+		{
+			if (boggleHelper(dict, prefix, board, currentWord, result, r, c + dc, dr, dc))
+				return true;
+			board[r][c] = origL; // reset cube for different letter arrangement
+		}
+	}
+	else if(dc != 0 && dr != 0)
+	{
+		// diagonal case
+		//std::cout << "diagonal case" << std::endl;
+		if (c + dc >= 0 && c + dc < board.size() && r + dr >= 0 && r + dr < board.size())
+		{
+			if (boggleHelper(dict, prefix, board, currentWord, result, r + dr, c + dc, dr, dc))
+				return true;
+			board[r][c] = origL; // reset cube for different letter arrangement
 		}
 	}
 	return false;
