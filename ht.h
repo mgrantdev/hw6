@@ -268,7 +268,7 @@ private:
      *
      * @throws std::logic_error if no more CAPACITIES exist
      */
-    void resize();
+    void resize(HASH_INDEX_T h);
 
     // Data members
     std::vector<HashItem *> table_; // actual hash table
@@ -340,7 +340,7 @@ void HashTable<K, V, Prober, Hash, KEqual>::insert(const ItemType &p)
 
     std::cout << "hash: " << h << std::endl;
     if(h <= size()) {
-        this->resize();
+        this->resize(h);
     }
 
     // Insert the element into the hash table at the final hash value
@@ -430,9 +430,11 @@ typename HashTable<K, V, Prober, Hash, KEqual>::HashItem *HashTable<K, V, Prober
 
 // To do
 template <typename K, typename V, typename Prober, typename Hash, typename KEqual>
-void HashTable<K, V, Prober, Hash, KEqual>::resize()
+void HashTable<K, V, Prober, Hash, KEqual>::resize(HASH_INDEX_T h)
 {
-    mIndex_++;
+    while(CAPACITIES[mIndex_] <= h) {
+        mIndex_++;
+    } 
     table_.resize(CAPACITIES[mIndex_]);
     probes_.resize(CAPACITIES[mIndex_]);
 }
