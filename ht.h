@@ -108,16 +108,17 @@ public:
     // To do
     HASH_INDEX_T next()
     {
-         if (this->numProbes_ >= this->m_)
+        if (this->numProbes_ >= this->m_)
         {
             return this->npos;
         }
         HASH_INDEX_T h1 = (this->start_ + this->numProbes_) % this->m_;
-        //////std::cout << "dh1: " << h1 << std::endl;
+       // std::cout << "dh1: " << h1 << std::endl;
 
         HASH_INDEX_T loc = (h1 + (this->numProbes_ * this->dhstep_)) % this->m_;
-        //////std::cout << "next double hash:" << loc << std::endl;
         this->numProbes_++;
+       // std::cout << "next double hash:" << loc << std::endl;
+        // this->numProbes_++;
         return loc;
     }
 };
@@ -316,10 +317,10 @@ HashTable<K, V, Prober, Hash, KEqual>::~HashTable()
 {
     for (int n = 0; n < table_.size(); n++)
     {
-        if (this->table_[n] != nullptr) {
-
+        if (this->table_[n] != nullptr)
+        {
         }
-            //this->remove(this->table_[n]->item.first);
+        // this->remove(this->table_[n]->item.first);
     }
 }
 
@@ -338,8 +339,8 @@ size_t HashTable<K, V, Prober, Hash, KEqual>::size() const
     for (int n = 0; n < table_.size(); n++)
     {
         if (this->table_[n] != nullptr)
-        if(!this->table_[n]->deleted)
-            i++;
+            if (!this->table_[n]->deleted)
+                i++;
     }
     return i;
 }
@@ -350,13 +351,19 @@ void HashTable<K, V, Prober, Hash, KEqual>::insert(const ItemType &p)
 {
 
     HASH_INDEX_T h = this->probe(p.first);
-    // Insert the element into the hash table at the final hash value
-    table_[h] = new HashItem(p);
-    //std::cout << "inserted " << p.second << " (" << p.first << ") at index " << h << std::endl;
-     double rAlpha = size()/CAPACITIES[mIndex_];
-    if(rAlpha >= resizeAlpha_) {
-        this->resize();
-    }
+
+    if (h != npos)
+        if (table_[h] == nullptr)
+        {
+            // Insert the element into the hash table at the final hash value
+            table_[h] = new HashItem(p);
+           // std::cout << "inserted " << p.second << " (" << p.first << ") at index " << h << std::endl;
+            double rAlpha = size() / CAPACITIES[mIndex_];
+            if (rAlpha >= resizeAlpha_)
+            {
+                this->resize();
+            }
+        }
 }
 
 // To do
@@ -364,8 +371,14 @@ template <typename K, typename V, typename Prober, typename Hash, typename KEqua
 void HashTable<K, V, Prober, Hash, KEqual>::remove(const KeyType &key)
 {
     HASH_INDEX_T h = this->probe(key);
-    if(table_[h] != nullptr) {
-        table_[h]->deleted = true;
+   // std::cout << "hash: " << h << std::endl;
+    if (table_[h] != nullptr)
+    {
+        if (table_[h]->item.first == key)
+        {
+            table_[h]->deleted = true;
+           // std::cout << "removed " << table_[h]->item.second << " (" << key << ") at index " << h << std::endl;
+        }
     }
 }
 
@@ -459,22 +472,22 @@ HASH_INDEX_T HashTable<K, V, Prober, Hash, KEqual>::probe(const KeyType &key) co
     HASH_INDEX_T h = hash_(key) % CAPACITIES[mIndex_];
     prober_.init(h, CAPACITIES[mIndex_], key);
 
-    //////std::cout << "hash: " << hash_(key) << std::endl;
+   // std::cout << "hash: " << hash_(key) << std::endl;
     HASH_INDEX_T loc = prober_.next();
     totalProbes_++;
     while (Prober::npos != loc)
     {
-        //////std::cout << "checking location: " << loc << std::endl;
+       // std::cout << "checking location: " << loc << std::endl;
         if (nullptr == table_[loc])
         {
-            //////std::cout << loc << " is empty" << std::endl;
+           // std::cout << loc << " is empty" << std::endl;
             return loc;
         }
         // fill in the condition for this else if statement which should
         // return 'loc' if the given key exists at this location
         else if (!table_[loc]->deleted)
         {
-            //////std::cout << loc << " is deleted" << std::endl;
+           // std::cout << loc << " key exists at location" << std::endl;
             return loc;
         }
         loc = prober_.next();
